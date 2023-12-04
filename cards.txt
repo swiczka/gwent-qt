@@ -1,0 +1,32 @@
+TroopCard;Geralt;1;15;false;true;1;noncombo
+TroopCard;Ciri;1;15;false;true;2;noncombo
+TroopCard;Vesemir;1;6;false;false;3;noncombo
+TroopCard;Triss;1;7;false;true;4;noncombo
+TroopCard;Zoltan Chivay;1;5;false;false;5;noncombo
+TroopCard;Avallach;1;0;true;true;6;noncombo
+TroopCard;Redanian Archer;2;3;false;false;7;noncombo
+TroopCard;Yennefer;2;7;false;true;8;noncombo
+TroopCard;Vernon Roche;1;10;false;false;9;noncombo
+TroopCard;Philippa Elihart;2;10;false;true;10;noncombo
+TroopCard;Ves;1;5;false;false;11;noncombo
+TroopCard;Dijkstra;1;4;true;false;12;noncombo
+TroopCard;Keira Metz;2;5;false;false;13;noncombo
+TroopCard;Trebuchet;3;6;false;false;14;noncombo
+TroopCard;Trebuchet;3;6;false;false;15;noncombo
+TroopCard;Catapult;3;8;false;false;16;combo
+TroopCard;Catapult;3;8;false;false;17;combo
+TroopCard;Poor Fucking Infantry;1;1;false;false;18;combo
+TroopCard;Poor Fucking Infantry;1;1;false;false;19;combo
+TroopCard;Poor Fucking Infantry;1;1;false;false;20;combo
+TroopCard;Blue Stripes Commando;1;4;false;false;21;combo
+TroopCard;Blue Stripes Commando;1;4;false;false;22;combo
+TroopCard;Blue Stripes Commando;1;4;false;false;23;combo
+WeatherCard;Freeze;1;24
+WeatherCard;Fog;2;25
+WeatherCard;Rain;3;26
+WeatherCard;Clear Sky;4;27
+Other;Mannequin;4;28
+Other;Mannequin;4;29
+Other;Battle Horn;4;30
+Other;Battle Horn;4;31
+Other;Scorch;4;32
