@@ -21,6 +21,8 @@ public:
 	bool getSpy() const;
 	bool getCombo() const;
 
+    QString description() const override;
+
 	void printCardInfo() const override;
 
 	bool operator==(const TroopCard& card1) const;

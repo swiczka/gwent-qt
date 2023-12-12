@@ -20,9 +20,6 @@ private:
     Ui::DifficultyDialog *ui;
     int difficulty;
 
-signals:
-    void difficultySelected(int difficulty);
-
 private slots:
     void on_okButton_clicked();
     void on_cancelButton_clicked();

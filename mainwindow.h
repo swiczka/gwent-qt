@@ -20,12 +20,19 @@ public:
     Enemy enemy;
     cardList nowInPlayerUse, playerDeck, globalDeck;
     void updatePlayerDeck();
+    void updateCurrentCards();
     void initializeDecks(int diff);
     void updateGameState();
+    void clearAllLayouts();
+    void clearLayout(QLayout *layout);
     ~MainWindow();
 
 private:
     Ui::MainWindow *ui;
+
+private slots:
+    void addCardWhenClicked(Card &pickedCard);
+    void addTroopCardWhenClicked(TroopCard &pickedCard);
 };
 
 #endif // MAINWINDOW_H

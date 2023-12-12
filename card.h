@@ -27,6 +27,8 @@ public:
 	int getId() const;
     QString getStrRange() const;
 
+    virtual QString description() const;
+
 	virtual void printCardInfo() const;
 
 	bool operator==(const Card& card1) const;

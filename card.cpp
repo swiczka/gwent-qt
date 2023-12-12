@@ -40,6 +40,10 @@ QString Card::getStrRange() const {
 	}
 }
 
+QString Card::description() const{
+    return QString(getName() + "\nRange: " + getStrRange() + "\n\n");
+}
+
 void Card::printCardInfo() const{
     qDebug() << getName() << "\n" << getStrRange() << "\n";
 }

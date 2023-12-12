@@ -7,6 +7,7 @@ DifficultyDialog::DifficultyDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::DifficultyDialog)
 {
+    this->setFixedSize(363, 170);
     ui->setupUi(this);
 }
 

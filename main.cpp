@@ -12,15 +12,16 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     DifficultyDialog difficultyDialog;
+    difficultyDialog.show();
     if (difficultyDialog.exec() != QDialog::Accepted)
         return 0; // Jeśli użytkownik anuluje, zakończ program
 
 
     int selectedDifficulty = difficultyDialog.getDifficulty();
-    qDebug() << selectedDifficulty;
 
     MainWindow w(nullptr);
-    w.show();
+    w.setWindowState(Qt::WindowMaximized);
+    w.showMaximized();
     w.initializeDecks(selectedDifficulty);
     w.updateGameState();
 

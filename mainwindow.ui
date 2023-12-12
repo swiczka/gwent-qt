@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1553</width>
-    <height>934</height>
+    <height>911</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>750</y>
+      <y>690</y>
       <width>1331</width>
-      <height>151</height>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="deckHorlLayout"/>
@@ -31,7 +31,7 @@
       <x>110</x>
       <y>10</y>
       <width>1331</width>
-      <height>361</height>
+      <height>331</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -50,7 +50,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>120</y>
+       <y>100</y>
        <width>1311</width>
        <height>20</height>
       </rect>
@@ -66,7 +66,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>240</y>
+       <y>210</y>
        <width>1311</width>
        <height>20</height>
       </rect>
@@ -75,14 +75,47 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>1311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="enemyMeeleeLayout"/>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>1311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="enemyShootingLayout"/>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>1311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="enemyBallisticLayout"/>
+    </widget>
    </widget>
    <widget class="QFrame" name="playerFrame">
     <property name="geometry">
      <rect>
       <x>110</x>
-      <y>380</y>
+      <y>350</y>
       <width>1331</width>
-      <height>361</height>
+      <height>331</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -101,7 +134,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>240</y>
+       <y>210</y>
        <width>1311</width>
        <height>20</height>
       </rect>
@@ -114,7 +147,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>120</y>
+       <y>100</y>
        <width>1311</width>
        <height>20</height>
       </rect>
@@ -123,13 +156,46 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>1311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="playerMeeleeLayout"/>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>120</y>
+       <width>1311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="playerShootingLayout"/>
+    </widget>
+    <widget class="QWidget" name="horizontalLayoutWidget_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>1311</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="playerBallisticLayout"/>
+    </widget>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>30</x>
       <y>50</y>
-      <width>81</width>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -146,8 +212,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>170</y>
-      <width>111</width>
+      <y>150</y>
+      <width>121</width>
       <height>41</height>
      </rect>
     </property>
@@ -163,8 +229,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>290</y>
+      <x>30</x>
+      <y>270</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -181,9 +247,9 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>430</y>
-      <width>81</width>
+      <x>30</x>
+      <y>390</y>
+      <width>101</width>
       <height>31</height>
      </rect>
     </property>
@@ -200,8 +266,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>550</y>
-      <width>111</width>
+      <y>490</y>
+      <width>141</width>
       <height>41</height>
      </rect>
     </property>
@@ -217,8 +283,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>670</y>
+      <x>30</x>
+      <y>610</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -239,7 +305,7 @@
      <x>0</x>
      <y>0</y>
      <width>1553</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

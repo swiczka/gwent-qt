@@ -44,6 +44,16 @@ bool TroopCard::getCombo() const {
 	return this->isCombo; 
 }
 
+QString TroopCard::description() const {
+    QString d;
+    d = getName() + "\nRange: " + getStrRange() + "\n" + "Strength: " + QString::number(getStrength()) + "\n";
+    if (getLegendary()) d += "Legendary ";
+    if (getCombo()) d += "Combo ";
+    if (getSpy()) d += "Spy ";
+    d += "\n";
+    return d;
+}
+
 void TroopCard::printCardInfo() const {
     qDebug() << getName() << "\n" << getStrRange() << "\n" << "Str: " << getStrength() << "\n";
     if (getLegendary()) qDebug() << "Legendary ";

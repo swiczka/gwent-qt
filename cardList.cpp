@@ -337,7 +337,8 @@ void cardList::addTwoCards(cardList globalDeck) {
 }
 
 void cardList::readCardsFromFile() {
-    ifstream inputFile("D:\\C C++\\qt\\gwent-qt\\cards.txt");
+    //ifstream inputFile("D:\\C C++\\qt\\gwent-qt\\cards.txt");
+    ifstream inputFile("D:\\Cpp\\gwent-qt\\cards.txt");
     //QString line;
 	if (inputFile.is_open()) {
         string line;

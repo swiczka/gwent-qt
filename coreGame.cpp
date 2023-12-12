@@ -1,10 +1,12 @@
 #pragma once
 
 #include "coreGame.h"
+#include <random>
+#include <thread>
 
 bool enemyEnds = false;
 bool playerEnds = false;
-cardList globalDeck;
+//cardList globalDeck;
 
 #define MAX_TROOP_COUNT 6
 #define MAX_OTHER_COUNT 3
@@ -171,7 +173,7 @@ void caseWeatherPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowI
     nowInVictimUse->addCard(pickedCard);
 }
 
-void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, TroopCard pickedCard) {
+void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck) {
     //removeTroopCard(deck, pickedCard); //usuwa spy z talii
     deck->removeTroopCard(pickedCard);
     deck->addTwoCards(globalDeck);
@@ -229,103 +231,98 @@ bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard) {
 
 
 
-void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck) {
+void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck) {
 
-    // srand((unsigned)time(NULL));
-    // int random = rand();
-    // bool canPlay = false;
-    // switch (enemy->difficulty) {
-
-
-    // case 1: //gdy łatwa trudność
-
-    // 	//break - gdy przeciwnik podejmie decyzje
-
-    // 	while (!canPlay) {
-
-    // 		//sprawdź czy zakończyć grę
-    // 		if (enemy->deck.getCardSize() + enemy->deck.getTroopCardSize() == 0 ||
-    // 			enemy->deck.hasMannequinsOnly()) {
-    // 			cout << YLW + "ENEMY SURRENDERS!" + reset << endl;
-    // 			canPlay = true;
-    // 			enemyEnds = true;
-    // 			break;
-    // 		}
-
-    // 		random_device rd;
-    // 		mt19937_64 gen(rd());
-    // 		int maxSize = enemy->deck.getCardSize() + enemy->deck.getTroopCardSize();
-    // 		uniform_int_distribution<> rCardDistribution(1, maxSize);
-
-    // 		int randomIndex = rCardDistribution(gen);
-    // 		//cout << "deckCardSize: " << enemy->deck.getCardSize() << endl;
-    // 		//cout << "deckTroopCardSize: " << enemy->deck.getTroopCardSize() << endl;
-    // 		//cout << "randomIndex: " << randomIndex << endl;
+    srand((unsigned)time(NULL));
+    int random = rand();
+    bool canPlay = false;
+    switch (enemy->difficulty) {
 
 
+    case 1: //gdy łatwa trudność
 
-    // 		if (randomIndex <= enemy->deck.getTroopCardSize()) { //gdy wylosowało troopcard
+        //break - gdy przeciwnik podejmie decyzje
 
-    // 			TroopCard card = enemy->deck.pickTroopCard(randomIndex);
+        while (!canPlay) {
 
-    // 			if (card.getSpy()) {
-    // 				caseSpyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
-    // 				canPlay = true;
-    // 				cout << "ENEMY picked " << card.getName() << endl;
-    // 				break;
-    // 			}
-    // 			else {
-    // 				enemy->deck.removeTroopCard(card);
-    // 				enemy->nowInUse.addTroopCard(card);
-    // 				canPlay = true;
-    // 				cout << "ENEMY picked " << card.getName() << endl;
-    // 				break;
-    // 			}
-    // 		}
-    // 		else if (randomIndex - enemy->deck.getTroopCardSize() > 0) { //gdy wylosowalo card
+            //sprawdź czy zakończyć grę
+            if (enemy->deck.getCardSize() + enemy->deck.getTroopCardSize() == 0 ||
+                enemy->deck.hasMannequinsOnly()) {
+                qDebug() << "ENEMY SURRENDERS!";
+                canPlay = true;
+                enemyEnds = true;
+                break;
+            }
 
-    // 			Card card = enemy->deck.pickCard(randomIndex);
+            random_device rd;
+            mt19937_64 gen(rd());
+            int maxSize = enemy->deck.getCardSize() + enemy->deck.getTroopCardSize();
+            uniform_int_distribution<> rCardDistribution(1, maxSize);
 
-    // 			if (card.getName() == "Clear Sky") {
-    // 				caseClearSkyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
-    // 				canPlay = true;
-    // 				cout << "ENEMY picked " << card.getName() << endl;
-    // 				break;
-    // 			}
+            int randomIndex = rCardDistribution(gen);
 
-    // 			else if (card.getName() == "Scorch") {
-    // 				if (caseEnemyScorchPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card)) {
-    // 					canPlay = true;
-    // 					cout << "ENEMY picked " << card.getName() << endl;
-    // 					break;
-    // 				}
-    // 				else continue;
-    // 			}
-    // 			else if (card.getName() == "Battle Horn") {
-    // 				if (caseEnemyBattleHornPlayed(&enemy->deck, &enemy->nowInUse, card)) {
-    // 					canPlay = true;
-    // 					cout << "ENEMY picked " << card.getName() << endl;
-    // 					break;
-    // 				}
-    // 				else continue;
-    // 			}
-    // 			else if (card.getName() == "Freeze" || card.getName() == "Fog" || card.getName() == "Rain") {
-    // 				caseWeatherPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
-    // 				canPlay = true;
-    // 				cout << "ENEMY picked " << card.getName() << endl;
-    // 				break;
-    // 			}
-    // 			else if (card.getName() == "Mannequin") {
-    // 				continue;
-    // 			}
-    // 		}
-    // 		else {
-    // 			cout << "zly indeks" << endl;
-    // 			continue;
-    // 		}
-    // 	}
-    // 	Sleep(500);
-    // 	break;
+            if (randomIndex <= enemy->deck.getTroopCardSize()) { //gdy wylosowało troopcard
+
+                TroopCard card = enemy->deck.pickTroopCard(randomIndex);
+
+                if (card.getSpy()) {
+                    caseSpyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card, globalDeck);
+                    canPlay = true;
+                    qDebug() << "ENEMY picked " << card.getName();
+                    break;
+                }
+                else {
+                    enemy->deck.removeTroopCard(card);
+                    enemy->nowInUse.addTroopCard(card);
+                    canPlay = true;
+                    qDebug() << "ENEMY picked " << card.getName();
+                    break;
+                }
+            }
+            else if (randomIndex - enemy->deck.getTroopCardSize() > 0) { //gdy wylosowalo card
+
+                Card card = enemy->deck.pickCard(randomIndex);
+
+                if (card.getName() == "Clear Sky") {
+                    caseClearSkyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
+                    canPlay = true;
+                    qDebug() << "ENEMY picked " << card.getName();
+                    break;
+                }
+
+                else if (card.getName() == "Scorch") {
+                    if (caseEnemyScorchPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card)) {
+                        canPlay = true;
+                        qDebug() << "ENEMY picked " << card.getName();
+                        break;
+                    }
+                    else continue;
+                }
+                else if (card.getName() == "Battle Horn") {
+                    if (caseEnemyBattleHornPlayed(&enemy->deck, &enemy->nowInUse, card)) {
+                        canPlay = true;
+                        qDebug() << "ENEMY picked " << card.getName();
+                        break;
+                    }
+                    else continue;
+                }
+                else if (card.getName() == "Freeze" || card.getName() == "Fog" || card.getName() == "Rain") {
+                    caseWeatherPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
+                    canPlay = true;
+                    qDebug() << "ENEMY picked " << card.getName();
+                    break;
+                }
+                else if (card.getName() == "Mannequin") {
+                    continue;
+                }
+            }
+            else {
+                qDebug() << "zly indeks";
+                continue;
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        break;
 
 
 
@@ -333,77 +330,77 @@ void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck)
 
 
 
-    // case 2:
+    case 2:
 
 
 
-    // 	if (enemy->deck.getTroopCardSize() > 0 && random % 10 > 5) {
-    // 		//zagraj troopcard
+        if (enemy->deck.getTroopCardSize() > 0 && random % 10 > 5) {
+            //zagraj troopcard
 
-    // 		if (random % 10 > 7) {
+            if (random % 10 > 7) {
 
-    // 		}
-    // 	}
+            }
+        }
 
-    // 	///////////////////////////////// ROZWAŻ POGODOWE //////////////////////////////
-    // 	//
-    // 	//
-    // 	else if (enemy->deck.hasFreeze() && nowInPlayerUse->getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() >
-    // 		enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength()) {
-    // 		//zagraj freeze
-    // 	}
-    // 	else if (enemy->deck.hasFog() && nowInPlayerUse->getShootingCardArray().getNonLegendaryTroops().getOverallStrength() >
-    // 		enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength()) {
-    // 		//zagraj fog
-    // 	}
-    // 	else if (enemy->deck.hasRain() && nowInPlayerUse->getBallisticCardArray().getNonLegendaryTroops().getOverallStrength() >
-    // 		enemy->nowInUse.getBallisticCardArray().getNonLegendaryTroops().getOverallStrength()) {
-    // 		//zagraj rain
-    // 	}
+        ///////////////////////////////// ROZWAŻ POGODOWE //////////////////////////////
+        //
+        //
+        else if (enemy->deck.hasFreeze() && nowInPlayerUse->getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() >
+            enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength()) {
+            //zagraj freeze
+        }
+        else if (enemy->deck.hasFog() && nowInPlayerUse->getShootingCardArray().getNonLegendaryTroops().getOverallStrength() >
+            enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength()) {
+            //zagraj fog
+        }
+        else if (enemy->deck.hasRain() && nowInPlayerUse->getBallisticCardArray().getNonLegendaryTroops().getOverallStrength() >
+            enemy->nowInUse.getBallisticCardArray().getNonLegendaryTroops().getOverallStrength()) {
+            //zagraj rain
+        }
 
 
-    // 	//
-    // 	//
-    // 	////////////////////////////////////////////////////////////////////////
+        //
+        //
+        ////////////////////////////////////////////////////////////////////////
 
-    // 	//////////////////////// ROZWAŻ BATTLE HORN ////////////////////////////
-    // 	//
-    // 	//
-    // 	else if (enemy->deck.hasHorn() &&
-    // 		enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
-    // 		!enemy->nowInUse.getMeeleeCardArray().hasHorn()) {
-    // 		//zagraj battle horn na meelee
-    // 	}
-    // 	else if (enemy->deck.hasHorn() &&
-    // 		enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
-    // 		!enemy->nowInUse.getShootingCardArray().hasHorn()) {
-    // 		//zagraj battle horn na shooting
-    // 	}
-    // 	else if (enemy->deck.hasHorn() &&
-    // 		enemy->nowInUse.getBallisticCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
-    // 		!enemy->nowInUse.getBallisticCardArray().hasHorn()) {
-    // 		//zagraj battle horn na ballistic
-    // 	}
-    // 	//
-    // 	//
-    // 	/////////////////////////////////////////////////////////////
+        //////////////////////// ROZWAŻ BATTLE HORN ////////////////////////////
+        //
+        //
+        else if (enemy->deck.hasHorn() &&
+            enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
+            !enemy->nowInUse.getMeeleeCardArray().hasHorn()) {
+            //zagraj battle horn na meelee
+        }
+        else if (enemy->deck.hasHorn() &&
+            enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
+            !enemy->nowInUse.getShootingCardArray().hasHorn()) {
+            //zagraj battle horn na shooting
+        }
+        else if (enemy->deck.hasHorn() &&
+            enemy->nowInUse.getBallisticCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
+            !enemy->nowInUse.getBallisticCardArray().hasHorn()) {
+            //zagraj battle horn na ballistic
+        }
+        //
+        //
+        /////////////////////////////////////////////////////////////
 
-    // 	//////////////////////////ROZWAŻ POŻOGĘ/////////////////////////////////
-    // 	//
-    // 	//
-    // 	else if (enemy->deck.hasScorch() &&
-    // 		enemy->nowInUse.getStrongestNonlegendCardSum() < nowInPlayerUse->getStrongestNonlegendCardSum()) {
-    // 		//zagraj scorch
-    // 	}
+        //////////////////////////ROZWAŻ POŻOGĘ/////////////////////////////////
+        //
+        //
+        else if (enemy->deck.hasScorch() &&
+            enemy->nowInUse.getStrongestNonlegendCardSum() < nowInPlayerUse->getStrongestNonlegendCardSum()) {
+            //zagraj scorch
+        }
 
-    // 	break;
+        break;
 
-    // default:
-    // 	cerr << "Invalid argument";
-    // 	throw invalid_argument("Invalid argument!");
-    // }
-    // enemy->nowInUse.adjustStrength();
-    // nowInPlayerUse->adjustStrength();
+    default:
+        qDebug() << "Invalid argument";
+        throw invalid_argument("Invalid argument!");
+    }
+    enemy->nowInUse.adjustStrength();
+    nowInPlayerUse->adjustStrength();
 }
 
 
