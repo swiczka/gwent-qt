@@ -4,6 +4,7 @@
 #include "difficultydialog.h"
 #include <QLabel>
 #include <QFormLayout>
+#include <QMessageBox>
 #include <thread>
 #include <chrono>
 #include "coreGame.h"
@@ -46,6 +47,11 @@ void MainWindow::updateCurrentCards(){
 
     clearAllLayouts();
 
+    //sprawdzi, czy są aktywne pogodowe
+    // if(enemy.nowInUse.hasFreeze()){
+    //     ui->
+    // }
+
     vector<Card> tempC = *enemy.nowInUse.getCardArray();
     for(Card& card : tempC){
         if(card.getName() == "Mannequin"){
@@ -69,7 +75,11 @@ void MainWindow::updateCurrentCards(){
     vector<TroopCard> tempT = *enemy.nowInUse.getTroopCardArray();
     for(TroopCard& card : tempT){
 
-        QLabel *cardLabel = new QLabel(card.description());
+        QLabel *cardLabel = new QLabel();
+        if(card.getLegendary()){
+            cardLabel->setText("<font color='yellow'>" + card.description() + "</font>");
+        }
+        else cardLabel->setText(card.description());
         QFormLayout *cardLayout = new QFormLayout;
         cardLayout->addRow(cardLabel);
 
@@ -109,7 +119,14 @@ void MainWindow::updateCurrentCards(){
     tempT = *nowInPlayerUse.getTroopCardArray();
     for(TroopCard& card : tempT){
 
-        QLabel *cardLabel = new QLabel(card.description());
+        QLabel *cardLabel = new QLabel();
+        if(card.getLegendary()){
+            QString dsc = card.description();
+            dsc.replace("\n", "<br>");
+            cardLabel->setText("<html><p><span style=\"outline: 10px solid #000000; color: #ecf754;\">" + dsc + "</span></p></html>");
+        }
+        else cardLabel->setText(card.description());
+
         QFormLayout *cardLayout = new QFormLayout;
         cardLayout->addRow(cardLabel);
 
@@ -125,6 +142,14 @@ void MainWindow::updateCurrentCards(){
             break;
         }
     }
+
+    //ustaw  wyswietlane sily
+    ui->enemyMeeleeStrength->setText(QString::fromStdString(to_string(enemy.nowInUse.getMeeleeCardArray().getOverallStrength())));
+    ui->enemyShootingStrength->setText(QString::fromStdString(to_string(enemy.nowInUse.getShootingCardArray().getOverallStrength())));
+    ui->enemyBallisticStrength->setText(QString::fromStdString(to_string(enemy.nowInUse.getBallisticCardArray().getOverallStrength())));
+    ui->playerMeeleeStrength->setText(QString::fromStdString(to_string(nowInPlayerUse.getMeeleeCardArray().getOverallStrength())));
+    ui->playerShootingStrength->setText(QString::fromStdString(to_string(nowInPlayerUse.getShootingCardArray().getOverallStrength())));
+    ui->playerBallisticStrength->setText(QString::fromStdString(to_string(nowInPlayerUse.getBallisticCardArray().getOverallStrength())));
 }
 
 void MainWindow::updatePlayerDeck(){
@@ -132,11 +157,17 @@ void MainWindow::updatePlayerDeck(){
     clearLayout(ui->deckHorlLayout);
 
     for (const Card& card : *playerDeck.getCardArray()){
+
         QPushButton *button = new QPushButton(card.description());
 
         connect(button, &QPushButton::clicked, [=]() {
             Card cardCopy = card;
-            addCardWhenClicked(cardCopy);
+            if(!addCardWhenClicked(cardCopy)){
+                QMessageBox mb;
+                mb.setText("You cannot pick this card!");
+                mb.exec();
+            }
+            else std::this_thread::sleep_for(std::chrono::seconds(1));
         });
 
         QFormLayout *cardLayout = new QFormLayout;
@@ -151,6 +182,7 @@ void MainWindow::updatePlayerDeck(){
         connect(button, &QPushButton::clicked, [=]() {
             TroopCard troopCardCopy = card;
             addTroopCardWhenClicked(troopCardCopy);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         });
 
         QFormLayout *cardLayout = new QFormLayout;
@@ -162,60 +194,63 @@ void MainWindow::updatePlayerDeck(){
 
 
 
-void MainWindow::addCardWhenClicked(Card &pickedCard){
+bool MainWindow::addCardWhenClicked(Card &pickedCard){
 
-    bool leaveLoop = false;
+    bool ok = false;
     //dopóki nie będzie prawidłowego wyboru, false
-    while(!leaveLoop){
 
-        if (pickedCard.getName() == "Clear Sky") { //usuwamy wszyskie karty pogodowe
-            caseClearSkyPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard);
-            leaveLoop = true;
-        }
-
-        //gdy wybrano pożogę
-        else if (pickedCard.getName() == "Scorch") {
-            if (caseScorchPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard)) {
-                leaveLoop = true;
-            }
-            else continue;
-        }
-
-        // gdy wybrano battle horn
-        else if (pickedCard.getName() == "Battle Horn") { //nalezy sprawdzić gdzie można dać battle horn
-            if (caseBattleHornPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
-                leaveLoop = true;
-            }
-            else continue;
-        }
-
-        // gdy wybrano kartę pogodową
-        else if (pickedCard.getName() == "Freeze" || pickedCard.getName() == "Fog" || pickedCard.getName() == "Rain") {
-            caseWeatherPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard);
-            leaveLoop = true;
-        }
-        //gdy wybrano manekina
-
-        //TODO//////////////////////////////////////////////////////
-        //
-        //
-        else if (pickedCard.getName() == "Mannequin") {
-            if (caseMannequinPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
-                leaveLoop = true; //wyjdz z petli gdy funkcja zwroci prawde
-            }
-            else continue; //zwróć błąd gdy zwróci false
-        }
-
-        nowInPlayerUse.adjustStrength();
-        enemy.nowInUse.adjustStrength();
-        updateGameState();
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
-        nowInPlayerUse.adjustStrength();
-        enemy.nowInUse.adjustStrength();
-        updateGameState();
+    if (pickedCard.getName() == "Clear Sky") { //usuwamy wszyskie karty pogodowe
+        caseClearSkyPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard);
+        ok = true;
     }
+
+    //gdy wybrano pożogę
+    else if (pickedCard.getName() == "Scorch") {
+        if (caseScorchPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard)) {
+            ok = true;
+        }
+        else ok = false;
+    }
+
+    // gdy wybrano battle horn
+    else if (pickedCard.getName() == "Battle Horn") { //nalezy sprawdzić gdzie można dać battle horn
+        if (caseBattleHornPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
+            ok = true;
+        }
+        else ok = false;
+    }
+
+    // gdy wybrano kartę pogodową
+    else if (pickedCard.getName() == "Freeze" || pickedCard.getName() == "Fog" || pickedCard.getName() == "Rain") {
+        caseWeatherPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard);
+        ok = true;
+    }
+    //gdy wybrano manek
+    //TODO//////////////////////////////////////////////////////
+    //
+    //
+    else if (pickedCard.getName() == "Mannequin") {
+        if (caseMannequinPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
+            ok = true; //wyjdz z petli gdy funkcja zwroci prawde
+        }
+        else ok = false; //zwróć błąd gdy zwróci false
+    }
+
+    if(!ok) return ok;
+
+    //wykonaj te instrukcje tylko jeśli ok = true
+    nowInPlayerUse.adjustStrength();
+    enemy.nowInUse.adjustStrength();
+    updateGameState();
+    //std::this_thread::sleep_for(std::chrono::seconds(1));
+    enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
+    nowInPlayerUse.adjustStrength();
+    enemy.nowInUse.adjustStrength();
+    updateGameState();
+
+    return ok;
 }
+
 
 void MainWindow::addTroopCardWhenClicked(TroopCard &pickedCard){
 
@@ -232,7 +267,7 @@ void MainWindow::addTroopCardWhenClicked(TroopCard &pickedCard){
     nowInPlayerUse.adjustStrength();
     enemy.nowInUse.adjustStrength();
     updateGameState();
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    //std::this_thread::sleep_for(std::chrono::seconds(1));
     enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
     nowInPlayerUse.adjustStrength();
     enemy.nowInUse.adjustStrength();

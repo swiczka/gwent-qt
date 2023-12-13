@@ -31,7 +31,7 @@ private:
     Ui::MainWindow *ui;
 
 private slots:
-    void addCardWhenClicked(Card &pickedCard);
+    bool addCardWhenClicked(Card &pickedCard);
     void addTroopCardWhenClicked(TroopCard &pickedCard);
 };
 

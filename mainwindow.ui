@@ -201,6 +201,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Bahnschrift SemiLight</family>
       <pointsize>18</pointsize>
      </font>
     </property>
@@ -219,6 +220,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Bahnschrift SemiLight</family>
       <pointsize>18</pointsize>
      </font>
     </property>
@@ -237,6 +239,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Bahnschrift SemiLight</family>
       <pointsize>18</pointsize>
      </font>
     </property>
@@ -255,6 +258,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Bahnschrift SemiLight</family>
       <pointsize>18</pointsize>
      </font>
     </property>
@@ -273,6 +277,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Bahnschrift SemiLight</family>
       <pointsize>18</pointsize>
      </font>
     </property>
@@ -291,11 +296,126 @@
     </property>
     <property name="font">
      <font>
+      <family>Bahnschrift SemiLight</family>
       <pointsize>18</pointsize>
      </font>
     </property>
     <property name="text">
      <string>Ballistic</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="enemyMeeleeStrength">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>30</y>
+      <width>61</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiLight</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="enemyShootingStrength">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>140</y>
+      <width>61</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiLight</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="enemyBallisticStrength">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>250</y>
+      <width>61</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiLight</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="playerBallisticStrength">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>590</y>
+      <width>61</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiLight</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="playerShootingStrength">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>480</y>
+      <width>61</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiLight</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="playerMeeleeStrength">
+    <property name="geometry">
+     <rect>
+      <x>1460</x>
+      <y>370</y>
+      <width>61</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiLight</family>
+      <pointsize>20</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>0</string>
     </property>
    </widget>
   </widget>

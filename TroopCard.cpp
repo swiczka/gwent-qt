@@ -50,7 +50,6 @@ QString TroopCard::description() const {
     if (getLegendary()) d += "Legendary ";
     if (getCombo()) d += "Combo ";
     if (getSpy()) d += "Spy ";
-    d += "\n";
     return d;
 }
 

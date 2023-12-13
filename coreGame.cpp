@@ -174,7 +174,6 @@ void caseWeatherPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowI
 }
 
 void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck) {
-    //removeTroopCard(deck, pickedCard); //usuwa spy z talii
     deck->removeTroopCard(pickedCard);
     deck->addTwoCards(globalDeck);
     nowInVictimUse->addTroopCard(pickedCard);
@@ -321,7 +320,6 @@ void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck,
                 continue;
             }
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
         break;
 
 
@@ -621,7 +619,7 @@ void cardList::adjustStrength() {
             uniqueNames.insert(card.getName());
 
             int count = 0;
-            for (TroopCard card_ : troopCardArray) { //policz ilosc danej karty
+            for (TroopCard& card_ : troopCardArray) { //policz ilosc danej karty
                 if (card_.getName() == card.getName()) {
                     count++;
                 }
@@ -644,7 +642,7 @@ void cardList::restoreDefaultStrength() {
     cardList originalDeck;
     originalDeck.readCardsFromFile();
     for (TroopCard& card : troopCardArray) {
-        for (TroopCard ogCard : *originalDeck.getTroopCardArray()) {
+        for (TroopCard& ogCard : *originalDeck.getTroopCardArray()) {
             if (card.getName() == ogCard.getName()) {
                 card.setStrength(ogCard.getStrength());
                 break;
