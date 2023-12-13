@@ -20,6 +20,7 @@ SOURCES += \
 
 HEADERS += \
     TroopCard.h \
+    allCards.h \
     card.h \
     cardList.h \
     coreGame.h \

@@ -13,7 +13,7 @@ cardList prepareDeck(cardList allCards);
 void printDeck(const cardList& deck, const string color);
 void playerDecision(cardList* deck, cardList* nowInUse, Enemy* enemy);
 bool caseEnemyBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard);
-bool caseBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard);
+vector<bool> caseBattleHornPlayed(cardList* nowInUse);
 bool caseEnemyScorchPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card& pickedCard);
 bool caseScorchPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card& pickedCard);
 bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard);

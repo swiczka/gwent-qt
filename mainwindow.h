@@ -29,6 +29,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    void handleWeather(QString weatherType);
+    void restoreColors();
+    bool askUserBattleHorn(Card pickedCard, vector<bool> canPlace);
 
 private slots:
     bool addCardWhenClicked(Card &pickedCard);

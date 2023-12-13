@@ -463,7 +463,7 @@ bool caseScorchPlayed(cardList* deck, cardList* nowInPickingUse, cardList *nowIn
     return true;
 }
 
-bool caseBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard ) {
+vector<bool> caseBattleHornPlayed(cardList* nowInUse) {
     vector<bool>availableSpots = { true, true, true };
     if (nowInUse->getMeeleeCardArray().hasHorn()) {
         availableSpots[0] = false;
@@ -474,48 +474,7 @@ bool caseBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard )
     if (nowInUse->getBallisticCardArray().hasHorn()) {
         availableSpots[2] = false;
     }
-    /// gdy nie mozna wstawic zadnego battle horna ///
-    if (availableSpots[0] == false && availableSpots[1] == false && availableSpots[2] == false) {
-        qDebug() << "You cannot play Battle Horn, as all ranges are already horned!" << "\n";
-        return false;
-    }
-    bool endLoop = false;
-
-    // while (!endLoop) {
-    // 	cout << "Where to place a battle horn?" << endl;
-    // 	cout << endl;
-    // 	cout << "0. CANCEL" << endl;
-    // 	if (availableSpots[0] == true) cout << "1. MEELEE" << endl;
-    // 	if (availableSpots[1] == true) cout << "2. SHOOTING" << endl;
-    // 	if (availableSpots[2] == true) cout << "3. BALLISTIC" << endl;
-    // 	string usrOpt;
-    // 	cin >> usrOpt;
-    // 	if (usrOpt == "0") {
-    // 		endLoop = true;
-    // 		return false;
-    // 	}
-    // 	else if (usrOpt == "1" && availableSpots[0] == true) {
-    // 		endLoop = true;
-    // 		nowInUse->addCard(Card(pickedCard.getName(), MEELEE, pickedCard.getId()));
-    // 		deck->removeCard(pickedCard);
-    // 	}
-    // 	else if (usrOpt == "2" && availableSpots[1] == true) {
-    // 		endLoop = true;
-    // 		nowInUse->addCard(Card(pickedCard.getName(), SHOOT, pickedCard.getId()));
-    // 		deck->removeCard(pickedCard);
-    // 	}
-    // 	else if (usrOpt == "3" && availableSpots[2] == true) {
-    // 		endLoop = true;
-    // 		nowInUse->addCard(Card(pickedCard.getName(), BALLISTIC, pickedCard.getId()));
-    // 		deck->removeCard(pickedCard);
-    // 	}
-    // 	else {
-    // 		cout << "Incorrect input!" << endl;
-    // 		cin.get();
-    // 		cin.ignore();
-    // 	}
-    // }
-    return true;
+    return availableSpots;
 }
 
 bool caseEnemyBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard) {
