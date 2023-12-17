@@ -325,6 +325,10 @@ bool MainWindow::askUserBattleHorn(Card pickedCard, vector<bool> canPlace){
     return false;
 }
 
+//bool MainWindow::handleMannequin(Card pickedCard){
+
+//}
+
 bool MainWindow::addCardWhenClicked(Card &pickedCard){
 
     bool ok = false;
@@ -363,6 +367,7 @@ bool MainWindow::addCardWhenClicked(Card &pickedCard){
     //
     else if (pickedCard.getName() == "Mannequin") {
         if (caseMannequinPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
+
             ok = true; //wyjdz z petli gdy funkcja zwroci prawde
         }
         else ok = false; //zwróć błąd gdy zwróci false

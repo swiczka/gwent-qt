@@ -180,52 +180,14 @@ void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVic
 }
 
 bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard) {
-    // //zwroc true, gdy sie powiodlo, false gdy nie
-    // //gdy wybrano manekina
-    // //sprawdz czy sa wgl jakies karty do podmianki
-    // if (nowInUse->getNonLegendaryTroops().getTroopCardSize() <= 0) {
-    // 	cout << "There are no cards to replace!" << endl;
-    // 	cout << "Press ENTER to choose again..." << endl;
-    // 	cin.get();
-    // 	cin.ignore();
-    // 	return false;
-    // }
-    // string chosenStrIndex;
-    // nowInUse->getNonLegendaryTroops().printCardArray();
-    // cout << "Which card do you want to replace?" << endl;
-    // cin >> chosenStrIndex;
-    // try {
-    // 	int chosenIndex = stoi(chosenStrIndex);
-    // 	//gdy gracz wprowadzi liczbe spoza zakresu
-    // 	if (chosenIndex > nowInUse->getNonLegendaryTroops().getTroopCardSize() ||
-    // 		chosenIndex < 1) {
-    // 		cout << "Invalid index! Please try again." << endl;
-    // 		cout << "Press ENTER to try again..." << endl;
-    // 		cin.get();
-    // 		cin.ignore();
-    // 		return false;
-    // 	}
-    // 	//gdy poprawnie uzyje manekina
-    // 	else {
-    // 		TroopCard chosenCard = nowInUse->getNonLegendaryTroops().getTroopCard(chosenIndex - 1);
-    // 		//removeTroopCard(nowInUse, chosenCard);
-    // 		nowInUse->removeTroopCard(chosenCard);
-    // 		nowInUse->addCard(Card("Mannequin", chosenCard.getRange(), pickedCard.getId()));
-    // 		deck->addTroopCard(chosenCard);
-    // 		deck->removeCard(pickedCard);
-    // 		deck->restoreDefaultStrength();
-    // 		return true;
-    // 	}
-    // }
-    // //gdy zostanie wprowadzona nie int
-    // catch (const invalid_argument& e) {
-    // 	cerr << "Error: You have to put an integer number: " << e.what() << endl;
-    // 	cout << "Press ENTER to try again..." << endl;
-    // 	cin.get();
-    // 	cin.ignore();
-    // 	return false;
-    // }
-    return false;
+    //zwroc true, gdy sie powiodlo, false gdy nie
+    //gdy wybrano manekina
+    //sprawdz czy sa wgl jakies karty do podmianki
+    if (nowInUse->getNonLegendaryTroops().getTroopCardSize() <= 0) {
+        //cout << "There are no cards to replace!" << endl;
+        return false;
+    }
+    else return true;
 }
 
 
