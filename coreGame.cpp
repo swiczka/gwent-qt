@@ -6,7 +6,8 @@
 
 bool enemyEnds = false;
 bool playerEnds = false;
-//cardList globalDeck;
+
+
 
 #define MAX_TROOP_COUNT 6
 #define MAX_OTHER_COUNT 3
@@ -183,8 +184,8 @@ bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard) {
     //zwroc true, gdy sie powiodlo, false gdy nie
     //gdy wybrano manekina
     //sprawdz czy sa wgl jakies karty do podmianki
-    if (nowInUse->getNonLegendaryTroops().getTroopCardSize() <= 0) {
-        //cout << "There are no cards to replace!" << endl;
+    if (nowInUse->getNonLegendaryTroops().getTroopCardSize() == 0) {
+        qDebug() << "There are no cards to replace!";
         return false;
     }
     else return true;
@@ -192,11 +193,14 @@ bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard) {
 
 
 
-void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck) {
+QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck) {
 
     srand((unsigned)time(NULL));
     int random = rand();
     bool canPlay = false;
+    bool troopCardPicked = false;
+    TroopCard troopCard;
+    Card card;
     switch (enemy->difficulty) {
 
 
@@ -224,25 +228,26 @@ void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck,
 
             if (randomIndex <= enemy->deck.getTroopCardSize()) { //gdy wylosowało troopcard
 
-                TroopCard card = enemy->deck.pickTroopCard(randomIndex);
+                troopCard = enemy->deck.pickTroopCard(randomIndex);
+                troopCardPicked = true;
 
-                if (card.getSpy()) {
-                    caseSpyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card, globalDeck);
+                if (troopCard.getSpy()) {
+                    caseSpyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, troopCard, globalDeck);
                     canPlay = true;
-                    qDebug() << "ENEMY picked " << card.getName();
+                    qDebug() << "ENEMY picked " << troopCard.getName();
                     break;
                 }
                 else {
-                    enemy->deck.removeTroopCard(card);
-                    enemy->nowInUse.addTroopCard(card);
+                    enemy->deck.removeTroopCard(troopCard);
+                    enemy->nowInUse.addTroopCard(troopCard);
                     canPlay = true;
-                    qDebug() << "ENEMY picked " << card.getName();
+                    qDebug() << "ENEMY picked " << troopCard.getName();
                     break;
                 }
             }
             else if (randomIndex - enemy->deck.getTroopCardSize() > 0) { //gdy wylosowalo card
 
-                Card card = enemy->deck.pickCard(randomIndex);
+                card = enemy->deck.pickCard(randomIndex);
 
                 if (card.getName() == "Clear Sky") {
                     caseClearSkyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
@@ -361,6 +366,12 @@ void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck,
     }
     enemy->nowInUse.adjustStrength();
     nowInPlayerUse->adjustStrength();
+
+    if(enemyEnds) return "none";
+    else if(troopCardPicked){
+        return troopCard.getName();
+    }
+    else return card.getName();
 }
 
 

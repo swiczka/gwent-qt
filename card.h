@@ -13,7 +13,7 @@ class Card : public QObject {
     Q_OBJECT
 public:
 
-    Card(QString name, int range, int id)
+    Card(QString name = "none", int range = 0, int id = 0)
 		: name(name), range(range), id(id) {
 	}
 

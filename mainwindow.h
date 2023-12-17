@@ -19,6 +19,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     Enemy enemy;
     cardList nowInPlayerUse, playerDeck, globalDeck;
+    bool enemyEnded = false, playerEnded = false;
     void updatePlayerDeck();
     void updateCurrentCards();
     void initializeDecks(int diff);
@@ -33,9 +34,14 @@ private:
     void restoreColors();
     bool askUserBattleHorn(Card pickedCard, vector<bool> canPlace);
 
+    void enemyTurn();
+    void endGame();
+    void enemyAction();
+    bool handleMannequin(Card pickedCard);
 private slots:
     bool addCardWhenClicked(Card &pickedCard);
     void addTroopCardWhenClicked(TroopCard &pickedCard);
+    void showHelp();
 };
 
 #endif // MAINWINDOW_H

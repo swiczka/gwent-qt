@@ -15,9 +15,9 @@ TroopCard;Trebuchet;3;6;false;false;14;noncombo
 TroopCard;Trebuchet;3;6;false;false;15;noncombo
 TroopCard;Catapult;3;8;false;false;16;combo
 TroopCard;Catapult;3;8;false;false;17;combo
-TroopCard;Poor Fucking Infantry;1;1;false;false;18;combo
-TroopCard;Poor Fucking Infantry;1;1;false;false;19;combo
-TroopCard;Poor Fucking Infantry;1;1;false;false;20;combo
+TroopCard;Poor Infantry;1;1;false;false;18;combo
+TroopCard;Poor Infantry;1;1;false;false;19;combo
+TroopCard;Poor Infantry;1;1;false;false;20;combo
 TroopCard;Blue Stripes Commando;1;4;false;false;21;combo
 TroopCard;Blue Stripes Commando;1;4;false;false;22;combo
 TroopCard;Blue Stripes Commando;1;4;false;false;23;combo

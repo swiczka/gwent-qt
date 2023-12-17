@@ -6,7 +6,8 @@ class TroopCard : public Card {
     Q_OBJECT
 public:
 
-    TroopCard(QString name, int range, int id, int strength, bool isLegendary, bool isSpy, bool isCombo);
+    TroopCard(QString name = "none", int range = 0, int id = 0, int strength = 0, bool isLegendary = false,
+              bool isSpy = false, bool isCombo = false);
 
     TroopCard(const TroopCard& other);
 

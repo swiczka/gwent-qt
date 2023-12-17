@@ -8,18 +8,50 @@
 #include <thread>
 #include <chrono>
 #include "coreGame.h"
+#include <QTimer>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->logsBrowser->setReadOnly(true);
+    this->setWindowTitle("Gwent QT");
+    connect(ui->finishButton, &QPushButton::clicked, [=]() {
+        ui->finishButton->hide();
+        playerEnded = true;
+        this->setDisabled(true);
+        if(playerEnded && enemyEnded) endGame();
+        else if(!enemyEnded) enemyTurn();
+    });
+    connect(ui->helpButton, &QPushButton::clicked, this, &MainWindow::showHelp);
     ui->enemyMeeleeFrame->setStyleSheet("background-color: #FF928A;");
     ui->enemyShootingFrame->setStyleSheet("background-color: #FF928A;");
     ui->enemyBallisticFrame->setStyleSheet("background-color: #FF928A;");
     ui->playerMeeleeFrame->setStyleSheet("background-color: #8AA5FF;");
     ui->playerShootingFrame->setStyleSheet("background-color: #8AA5FF;");
     ui->playerBallisticFrame->setStyleSheet("background-color: #8AA5FF;");
+}
+
+void MainWindow::showHelp(){
+    QMessageBox helpBox;
+    helpBox.setWindowTitle("Gwent - Help");
+    QString help = "Witaj w grze GWINT.\n\n"
+                   "Na dole w formie przycisków wyświetlane są dostępne karty. Aby wybrać którąś kartę, kliknij ją.\n"
+                   "Kiedy nie chcesz już dawać żadnej karty, naciśnij przycisk FINISH, wtedy przeciwnik zagra tyle kart ile będzie chciał i gra się zakończy.\n"
+                   "Wygrywa osoba o większej ilości punktów\n\n"
+                   "Karty typu SPY oznaczają, że po ich zagraniu karta trafi na stół przeciwnika, jednak dostaniesz wtedy dwie losowo wybrane karty, których jeszcze nie posiadasz.\n"
+                   "Karty typu COMBO oznaczają, że kiedy na stole są dwie lub więcej takie same karty z oznaczeniem COMBO, ich siłą zostaje iloczyn siły kart i ich liczność.\n"
+                   "Karty legendarne są odporne na wszystkie efekty.\n"
+                   "Karta SCORCH powoduje, że ze stołu znika(ją) najsilniejsze karty. Działa na cały stół bez względu na to kto jej używa\n"
+                   "Karta BATTLE HORN pozwala wybrać, siłę którego rzędu chcesz podwoić.\n"
+                   "Karty pogodowe po zagraniu przez dowolną ze stron obniżają siłę jednostek w danym rzędzie do 1\n"
+                   "Karta MANNEQUIN pozwala na podmienienie jednej z twoich kart ze stołu i zabranie jej spowrotem do ręki\n\n"
+                   "Powodzenia!\n";
+    helpBox.setText(help);
+    helpBox.setStandardButtons(QMessageBox::Ok);
+    helpBox.exec();
 }
 
 //autor funkcji: Wes Hardaker stackoverflow
@@ -82,22 +114,31 @@ void MainWindow::updateCurrentCards(){
     for(Card& card : tempC){
         if(card.getName() == "Mannequin"){
 
-            QLabel *cardLabel = new QLabel(card.description());
-            cardLabel->setStyleSheet("QLabel{margin-left: 10px; border-radius: 25px; background: white; color: #4A0C46;}");
-            QFormLayout *cardLayout = new QFormLayout;
-            cardLayout->addRow(cardLabel);
+            QLabel *cardLabel = new QLabel();
+            QFrame *cardFrame = new QFrame();
+
+            cardLabel->setText(card.description());
+            cardLabel->setAlignment(Qt::AlignCenter);
+
+            //tworzy layout wewnątrz QFrame (jako dziecko qframe)
+            QFormLayout *cardLayout = new QFormLayout(cardFrame);
+
+            cardLayout->addWidget(cardLabel);
+            cardFrame->setFixedSize(150, 85);
+            cardFrame->setStyleSheet("QFrame{background-color: white; border-radius: 10px;}");
 
             switch (card.getRange()){
             case MEELEE:
-                ui->enemyMeeleeLayout->addLayout(cardLayout);
+                ui->enemyMeeleeLayout->addWidget(cardFrame);
                 break;
             case SHOOT:
-                ui->enemyShootingLayout->addLayout(cardLayout);
+                ui->enemyShootingLayout->addWidget(cardFrame);
                 break;
             case BALLISTIC:
-                ui->enemyBallisticLayout->addLayout(cardLayout);
+                ui->enemyBallisticLayout->addWidget(cardFrame);
                 break;
             }
+
         }
         else if(card.getName() == "Freeze" || card.getName() == "Fog" || card.getName() == "Rain"){
             handleWeather(card.getName());
@@ -152,24 +193,36 @@ void MainWindow::updateCurrentCards(){
         }
     }
 
+    //cards gracza
     tempC = *nowInPlayerUse.getCardArray();
     for(Card& card : tempC){
         if(card.getName() == "Mannequin"){
-            QLabel *cardLabel = new QLabel(card.description());
-            QFormLayout *cardLayout = new QFormLayout;
-            cardLabel->setStyleSheet("border: 1px solid black");
-            cardLayout->addRow(cardLabel);
+
+            QLabel *cardLabel = new QLabel();
+            QFrame *cardFrame = new QFrame();
+
+            cardLabel->setText(card.description());
+            cardLabel->setAlignment(Qt::AlignCenter);
+
+            //tworzy layout wewnątrz QFrame (jako dziecko qframe)
+            QFormLayout *cardLayout = new QFormLayout(cardFrame);
+
+            cardLayout->addWidget(cardLabel);
+            cardFrame->setFixedSize(150, 85);
+            cardFrame->setStyleSheet("QFrame{background-color: white; border-radius: 10px;}");
+
             switch (card.getRange()){
             case MEELEE:
-                ui->playerMeeleeLayout->addLayout(cardLayout);
+                ui->playerMeeleeLayout->addWidget(cardFrame);
                 break;
             case SHOOT:
-                ui->playerShootingLayout->addLayout(cardLayout);
+                ui->playerShootingLayout->addWidget(cardFrame);
                 break;
             case BALLISTIC:
-                ui->playerBallisticLayout->addLayout(cardLayout);
+                ui->playerBallisticLayout->addWidget(cardFrame);
                 break;
             }
+
         }
 
         else if(card.getName() == "Freeze" || card.getName() == "Fog" || card.getName() == "Rain"){
@@ -325,9 +378,38 @@ bool MainWindow::askUserBattleHorn(Card pickedCard, vector<bool> canPlace){
     return false;
 }
 
-//bool MainWindow::handleMannequin(Card pickedCard){
+bool MainWindow::handleMannequin(Card pickedCard){
+    QDialog dialog(this);
 
-//}
+    dialog.setWindowTitle("Which card to replace?");
+
+    vector<TroopCard> tCards = *nowInPlayerUse.getNonLegendaryTroops().getTroopCardArray();
+
+    QHBoxLayout *layout = new QHBoxLayout(&dialog);
+
+    for (const TroopCard& card : tCards){
+        QPushButton *button = new QPushButton(card.description());
+
+        QFormLayout *formLayout = new QFormLayout;
+
+        connect(button, &QPushButton::clicked, [=, &dialog]() {
+            playerDeck.removeCard(pickedCard);
+            nowInPlayerUse.addCard(Card(pickedCard.getName(), card.getRange(), pickedCard.getId()));
+            nowInPlayerUse.removeTroopCard(card);
+            playerDeck.addTroopCard(card);
+            dialog.accept();
+            return true;
+        });
+
+        formLayout->addRow(button);
+        layout->addLayout(formLayout);
+    }
+    dialog.setLayout(layout);
+
+    if(dialog.exec() == QDialog::Accepted)
+        return true;
+    else return false;
+}
 
 bool MainWindow::addCardWhenClicked(Card &pickedCard){
 
@@ -361,14 +443,13 @@ bool MainWindow::addCardWhenClicked(Card &pickedCard){
         caseWeatherPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard);
         ok = true;
     }
-    //gdy wybrano manek
-    //TODO//////////////////////////////////////////////////////
-    //
-    //
+
     else if (pickedCard.getName() == "Mannequin") {
         if (caseMannequinPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
-
-            ok = true; //wyjdz z petli gdy funkcja zwroci prawde
+            if(handleMannequin(pickedCard)){
+                ok = true;
+            }
+            else ok = false;
         }
         else ok = false; //zwróć błąd gdy zwróci false
     }
@@ -380,10 +461,8 @@ bool MainWindow::addCardWhenClicked(Card &pickedCard){
     enemy.nowInUse.adjustStrength();
     updateGameState();
     //std::this_thread::sleep_for(std::chrono::seconds(1));
-    enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
-    nowInPlayerUse.adjustStrength();
-    enemy.nowInUse.adjustStrength();
-    updateGameState();
+    if(playerEnded && enemyEnded) endGame();
+    if(!enemyEnded) enemyTurn();
 
     return ok;
 }
@@ -405,11 +484,93 @@ void MainWindow::addTroopCardWhenClicked(TroopCard &pickedCard){
     nowInPlayerUse.adjustStrength();
     enemy.nowInUse.adjustStrength();
     updateGameState();
-    //std::this_thread::sleep_for(std::chrono::seconds(1));
-    enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
+    if(playerEnded && enemyEnded) endGame();
+    if(!enemyEnded) enemyTurn();
+}
+
+void MainWindow::enemyTurn(){
+    if(playerEnded && !enemyEnded){ //gdy gracz zakończył ale przeciwnik jeszcze gra
+        QTimer::singleShot(2000, this, &MainWindow::enemyAction);
+    }
+    else if(!playerEnded && !enemyEnded){ //gdy żaden nie zakończył
+        QTimer::singleShot(1000, this, &MainWindow::enemyAction);
+        this->setDisabled(true);
+    }
+}
+
+void MainWindow::enemyAction(){
+    if(enemyEnded){
+        if (playerEnded && enemyEnded){
+            endGame();
+            return;
+        }
+    }
+
+    QString pickedByEnemy = enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
     nowInPlayerUse.adjustStrength();
     enemy.nowInUse.adjustStrength();
+    if(pickedByEnemy == "none") {
+        enemyEnded = true;
+        ui->logsBrowser->append("ENEMY PASSES!");
+        if (playerEnded && enemyEnded) { //jeżeli oboje zakończyli, zakończ
+            endGame();
+            return;
+        }
+        else this->setDisabled(false); //jeżeli tylko wróg zakończył, odblokuj okno główne
+    }
+
+    ui->logsBrowser->append("Enemy picked " + pickedByEnemy);
     updateGameState();
+
+    if(playerEnded) QTimer::singleShot(2000, this, &MainWindow::enemyAction);
+    else this->setDisabled(false);
+}
+
+void MainWindow::endGame(){
+    ui->logsBrowser->append("GG");
+
+    QDialog endDialog(this);
+    endDialog.setWindowTitle("Game ended!");
+
+    QVBoxLayout *vLayout = new QVBoxLayout(&endDialog);
+
+    QLabel imageLabel;
+
+    int yourPoints = nowInPlayerUse.getOverallStrength();
+    int enemyPoints = enemy.nowInUse.getOverallStrength();
+    QString message;
+    QPixmap image;
+
+    if(yourPoints > enemyPoints) { //gdy wygrana
+        image = QPixmap("D:/C C++/qt/gwent-qt/images/win.png");
+        message = "You won with " + QString::fromStdString(to_string(yourPoints)) + " pts. against enemy's " +
+                                 QString::fromStdString(to_string(enemyPoints)) + " pts.!";
+    }
+    else if(yourPoints < enemyPoints){ //gdy przegrana
+        image = QPixmap("D:/C C++/qt/gwent-qt/images/lose.png");
+        message = "You lost with " + QString::fromStdString(to_string(yourPoints)) + " pts. against enemy's " +
+                                 QString::fromStdString(to_string(enemyPoints)) + " pts..";
+    }
+    else if(yourPoints == enemyPoints){
+        image = QPixmap("D:/C C++/qt/gwent-qt/images/win.png");
+        message = "You drawn with " + QString::fromStdString(to_string(yourPoints)) + " pts. against enemy's " +
+                  QString::fromStdString(to_string(enemyPoints)) + " pts..";
+    }
+
+    QLabel messageLabel(message);
+
+    imageLabel.setPixmap(image);
+
+    vLayout->addWidget(&imageLabel);
+    vLayout->addWidget(&messageLabel);
+
+    QPushButton *okButton = new QPushButton("OK", &endDialog);
+    connect(okButton, &QPushButton::clicked, &endDialog, &QDialog::accept);
+
+    vLayout->addWidget(okButton);
+
+    endDialog.setLayout(vLayout);
+    endDialog.exec();
 }
 
 

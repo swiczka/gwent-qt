@@ -20,4 +20,4 @@ bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard);
 void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck);
 void caseClearSkyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card pickedCard);
 void caseWeatherPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card pickedCard);
-void enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck);
+QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck);
