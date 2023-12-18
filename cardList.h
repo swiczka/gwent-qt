@@ -27,8 +27,6 @@ public:
 
 	void setUsedIds(unordered_set<int> usedIds) { this->usedIds = usedIds;  }
 
-	void printCardArray() const;
-
 	TroopCard& pickTroopCard(int pickedIndex);
 
 	Card& pickCard(int pickedIndex);
@@ -73,23 +71,20 @@ public:
 	bool hasFreeze() const;
 	bool hasFog() const;
 	bool hasRain() const;
-	bool hasHorn() const;
+    int hasHorn() const;
 	bool hasScorch() const;
 	bool hasMannequinsOnly() const;
+    TroopCard hasSpy() const;
 
-	void printRow() const;
+    void adjustStrength(cardList &globalDeck);
 
-	void adjustStrength();
-
-	void restoreDefaultStrength();
+    void restoreDefaultStrength(cardList &originalDeck);
 
 	int getOverallStrength() const;
 
 	void addTwoCards(cardList globalDeck);
 
-	void readCardsFromFile();
-
-	
+    bool hasClearSky() const;
 private:
 	vector<Card> cardArray;
 	vector<TroopCard> troopCardArray;

@@ -1,7 +1,7 @@
 #include "difficultydialog.h"
 #include "ui_difficultydialog.h"
 
-#include "mainwindow.h"
+//#include "mainwindow.h"
 
 DifficultyDialog::DifficultyDialog(QWidget *parent)
     : QDialog(parent)
@@ -9,6 +9,7 @@ DifficultyDialog::DifficultyDialog(QWidget *parent)
 {
     this->setFixedSize(363, 170);
     ui->setupUi(this);
+    this->setWindowTitle("Gwent - Difficulty Selection");
 }
 
 DifficultyDialog::~DifficultyDialog()

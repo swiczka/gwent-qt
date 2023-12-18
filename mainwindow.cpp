@@ -8,6 +8,7 @@
 #include <thread>
 #include <chrono>
 #include "coreGame.h"
+#include "allCards.h"
 #include <QTimer>
 #include <QPixmap>
 
@@ -50,6 +51,7 @@ void MainWindow::showHelp(){
                    "Karta MANNEQUIN pozwala na podmienienie jednej z twoich kart ze stołu i zabranie jej spowrotem do ręki\n\n"
                    "Powodzenia!\n";
     helpBox.setText(help);
+    helpBox.setStyleSheet("font: 16px");
     helpBox.setStandardButtons(QMessageBox::Ok);
     helpBox.exec();
 }
@@ -445,7 +447,7 @@ bool MainWindow::addCardWhenClicked(Card &pickedCard){
     }
 
     else if (pickedCard.getName() == "Mannequin") {
-        if (caseMannequinPlayed(&playerDeck, &nowInPlayerUse, pickedCard)) {
+        if (caseMannequinPlayed(&nowInPlayerUse)) {
             if(handleMannequin(pickedCard)){
                 ok = true;
             }
@@ -457,8 +459,8 @@ bool MainWindow::addCardWhenClicked(Card &pickedCard){
     if(!ok) return ok;
 
     //wykonaj te instrukcje tylko jeśli ok = true
-    nowInPlayerUse.adjustStrength();
-    enemy.nowInUse.adjustStrength();
+    nowInPlayerUse.adjustStrength(globalDeck);
+    enemy.nowInUse.adjustStrength(globalDeck);
     updateGameState();
     //std::this_thread::sleep_for(std::chrono::seconds(1));
     if(playerEnded && enemyEnded) endGame();
@@ -473,7 +475,7 @@ void MainWindow::addTroopCardWhenClicked(TroopCard &pickedCard){
     qDebug() << "You've chosen " << pickedCard.getName();
 
     if (pickedCard.getSpy()) { //sprawdzamy czy wybrano szpiega
-        caseSpyPlayed(&playerDeck, &nowInPlayerUse, &enemy.nowInUse, pickedCard, globalDeck);
+        caseSpyPlayed(&playerDeck, &enemy.nowInUse, pickedCard, globalDeck);
     }
 
     else { //nie szpieg
@@ -481,8 +483,8 @@ void MainWindow::addTroopCardWhenClicked(TroopCard &pickedCard){
         playerDeck.removeTroopCard(pickedCard);
     }
 
-    nowInPlayerUse.adjustStrength();
-    enemy.nowInUse.adjustStrength();
+    nowInPlayerUse.adjustStrength(globalDeck);
+    enemy.nowInUse.adjustStrength(globalDeck);
     updateGameState();
     if(playerEnded && enemyEnded) endGame();
     if(!enemyEnded) enemyTurn();
@@ -507,8 +509,8 @@ void MainWindow::enemyAction(){
     }
 
     QString pickedByEnemy = enemyDecision(&enemy, &nowInPlayerUse, &playerDeck, globalDeck);
-    nowInPlayerUse.adjustStrength();
-    enemy.nowInUse.adjustStrength();
+    nowInPlayerUse.adjustStrength(globalDeck);
+    enemy.nowInUse.adjustStrength(globalDeck);
     if(pickedByEnemy == "none") {
         enemyEnded = true;
         ui->logsBrowser->append("ENEMY PASSES!");
@@ -584,10 +586,16 @@ void MainWindow::initializeDecks(int diff){
     //     //
     //     //
 
-    globalDeck.readCardsFromFile();
-    playerDeck = prepareDeck(globalDeck);
-    enemy.deck = prepareDeck(globalDeck);
+    //globalDeck.readCardsFromFile();
+    prepareGlobalDeck(&this->globalDeck);
+    playerDeck = prepareDeck(globalDeck, false);
+
     enemy.difficulty = diff;
+
+    if(diff == 1){
+        enemy.deck = prepareDeck(globalDeck, true);
+    }
+    else if(diff == 2) enemy.deck = prepareDeck(globalDeck, false);
 }
 
 void MainWindow::updateGameState(){

@@ -2,7 +2,9 @@
 
 #include "coreGame.h"
 #include <random>
-#include <thread>
+//#include <thread>
+#include <unordered_set>
+//#include <unordered_map>
 
 bool enemyEnds = false;
 bool playerEnds = false;
@@ -12,14 +14,27 @@ bool playerEnds = false;
 #define MAX_TROOP_COUNT 6
 #define MAX_OTHER_COUNT 3
 
-cardList prepareDeck(cardList allCards) {
+cardList prepareDeck(cardList allCards, bool easier) {
     cardList newPlayerDeck;
     allCards.shuffleDeck();
 
     //add troops first
+    if(easier){
+        int alreadyAdded = 0, iter = 0;
 
-    for (int i = 0; i < MAX_TROOP_COUNT; i++) {
-        newPlayerDeck.addTroopCard(allCards.getTroopCard(i));
+        while(alreadyAdded != MAX_TROOP_COUNT){
+            TroopCard toAdd = allCards.getTroopCard(iter);
+            iter++;
+            if(!toAdd.getLegendary() && (toAdd.getStrength() < 10)){
+                newPlayerDeck.addTroopCard(toAdd);
+                alreadyAdded++;
+            }
+        }
+    }
+    else{
+        for (int i = 0; i < MAX_TROOP_COUNT; i++) {
+            newPlayerDeck.addTroopCard(allCards.getTroopCard(i));
+        }
     }
 
     for (int i = 0; i < MAX_OTHER_COUNT; i++) {
@@ -27,140 +42,6 @@ cardList prepareDeck(cardList allCards) {
     }
     return newPlayerDeck;
 }
-
-void printDeck(const cardList& deck, string color) {
-    qDebug() << QString::fromStdString("MEELEE ");
-    if (deck.hasFreeze()) qDebug() << "(FROZEN) ";
-    if (deck.getMeeleeCardArray().hasHorn()) qDebug() << "(HORNED) ";
-    qDebug() << ": ";
-    qDebug() << "\tOverall MEELEE strength: " << deck.getMeeleeCardArray().getOverallStrength() << "\n";
-    deck.getMeeleeCardArray().printRow();
-    qDebug() << "\n";
-
-    qDebug() << QString::fromStdString("SHOOTING ");
-    if (deck.hasFog()) qDebug() << "(FOGGED) ";
-    if (deck.getShootingCardArray().hasHorn()) qDebug() << "(HORNED) ";
-    qDebug() << ": ";
-    qDebug() << "\tOverall SHOOTERS strength: " << deck.getShootingCardArray().getOverallStrength() << "\n";
-    deck.getShootingCardArray().printRow();
-    qDebug() << "\n";
-
-    qDebug() << QString::fromStdString("BALLISTIC ");
-    if (deck.hasRain()) qDebug() << "(RAINY) ";
-    if (deck.getBallisticCardArray().hasHorn()) qDebug() << "(HORNED) ";
-    qDebug() << ": ";
-    qDebug() << "\tOverall BALLISTICS strength: " << deck.getBallisticCardArray().getOverallStrength() << "\n";
-    deck.getBallisticCardArray().printRow();
-
-    qDebug() << "OVERALL DECK STRENGTH : " << deck.getOverallStrength() << "\n";
-    qDebug() << "\n";
-}
-
-void playerDecision(cardList* deck, cardList* nowInUse, Enemy* enemy) {
-    // bool leaveLoop = false;
-    // if (deck->getCardSize() == 0 && deck->getTroopCardSize() == 0) {
-    // 	playerEnds = true;
-    // 	leaveLoop = true;
-    // }
-
-    // while (!leaveLoop) {
-    // 	deck->printCardArray();
-    // 	cout << "Pick a number of a card you want to play or 0 to pass. " << endl;
-    // 	string pickedStrIndex;
-    // 	cin >> pickedStrIndex;
-    // 	try {
-
-    // 		int pickedIndex = stoi(pickedStrIndex); // konwersja znakow na int
-
-    // 		if (pickedIndex == 0) { //jezeli gracz chce zakonczyc
-    // 			playerEnds = true;
-    // 			leaveLoop = true;
-    // 		}
-
-    // 		else if (pickedIndex - 1 < deck->getTroopCardSize()) { // sprawdzamy czy wybrano troopcard
-
-    // 			TroopCard& pickedCard = deck->pickTroopCard(pickedIndex);
-    // 			cout << "You've chosen " << pickedCard.getName() << endl;
-
-    // 			if (pickedCard.getSpy()) { //sprawdzamy czy wybrano szpiega
-    // 				caseSpyPlayed(deck, nowInUse, &enemy->nowInUse, pickedCard);
-    // 			}
-    // 			else { //nie szpieg
-    // 				nowInUse->addTroopCard(pickedCard);
-    // 				deck->removeTroopCard(pickedCard);
-    // 			}
-    // 			leaveLoop = true;
-    // 		}
-
-    // 		else if (pickedIndex - 1 - deck->getTroopCardSize() >= 0 && //sprawdzamy czy wybrano inna karte
-    // 			pickedIndex - 1 - deck->getTroopCardSize() < deck->getCardSize()) {
-
-    // 			Card pickedCard = deck->pickCard(pickedIndex);
-    // 			cout << "You've chosen " << pickedCard.getName() << endl;
-
-    // 			if (pickedCard.getName() == "Clear Sky") { //usuwamy wszyskie karty pogodowe
-    // 				caseClearSkyPlayed(deck, nowInUse, &enemy->nowInUse, pickedCard);
-    // 				leaveLoop = true;
-    // 			}
-    // 			//gdy wybrano pożogę
-    // 			else if (pickedCard.getName() == "Scorch") {
-    // 				if (caseScorchPlayed(deck, nowInUse, &enemy->nowInUse, pickedCard)) {
-    // 					leaveLoop = true;
-    // 				}
-    // 				else continue;
-    // 			}
-    // 			// gdy wybrano battle horn
-    // 			else if (pickedCard.getName() == "Battle Horn") { //nalezy sprawdzić gdzie można dać battle horn
-
-    // 				if (caseBattleHornPlayed(deck, nowInUse, pickedCard)) {
-    // 					leaveLoop = true;
-    // 				}
-    // 				else continue;
-    // 			}
-    // 			// gdy wybrano kartę pogodową
-    // 			else if (pickedCard.getName() == "Freeze" || pickedCard.getName() == "Fog" || pickedCard.getName() == "Rain") {
-    // 				caseWeatherPlayed(deck, nowInUse, &enemy->nowInUse, pickedCard);
-    // 				leaveLoop = true;
-    // 			}
-    // 			//gdy wybrano manekina
-    // 			else if (pickedCard.getName() == "Mannequin") {
-    // 				if (caseMannequinPlayed(deck, nowInUse, pickedCard)) {
-    // 					leaveLoop = true; //wyjdz z petli gdy funkcja zwroci prawde
-    // 				}
-    // 				else continue; //zwróć błąd gdy zwróci false
-    // 			}
-    // 		}
-    // 		else {
-    // 			cout << "Picked incorrect option!" << endl;
-    // 			cout << "Press ENTER to try again..." << endl;
-    // 			cin.get();
-    // 			cin.ignore(2, '\n');
-    // 			continue;
-    // 		}
-    // 	}
-    // 	catch (const std::invalid_argument& e) {
-    // 		std::cerr << "Error: You have to put an integer number: " << e.what() << std::endl;
-    // 		cout << "Press ENTER to try again..." << endl;
-    // 		cin.get();
-    // 		cin.ignore(2, '\n');
-    // 		continue;
-    // 	}
-    // 	catch (const std::out_of_range& e) {
-    // 		std::cerr << "Error. Out of range: " << e.what() << std::endl;
-    // 		continue;
-    // 	}
-
-    // 	nowInUse->adjustStrength();
-    // 	enemy->nowInUse.adjustStrength();
-
-    // }
-
-    // if (deck->getCardSize() == 0 && deck->getTroopCardSize() == 0) {
-    // 	playerEnds = true;
-    // 	leaveLoop = true;
-    // }
-}
-
 
 void caseClearSkyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card pickedCard) {
     nowInPickingUse->removeWeatherCards();
@@ -174,13 +55,13 @@ void caseWeatherPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowI
     nowInVictimUse->addCard(pickedCard);
 }
 
-void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck) {
+void caseSpyPlayed(cardList* deck, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck) {
     deck->removeTroopCard(pickedCard);
     deck->addTwoCards(globalDeck);
     nowInVictimUse->addTroopCard(pickedCard);
 }
 
-bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard) {
+bool caseMannequinPlayed(cardList* nowInUse) {
     //zwroc true, gdy sie powiodlo, false gdy nie
     //gdy wybrano manekina
     //sprawdz czy sa wgl jakies karty do podmianki
@@ -201,6 +82,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
     bool troopCardPicked = false;
     TroopCard troopCard;
     Card card;
+    int hornId = 0;
     switch (enemy->difficulty) {
 
 
@@ -232,7 +114,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
                 troopCardPicked = true;
 
                 if (troopCard.getSpy()) {
-                    caseSpyPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, troopCard, globalDeck);
+                    caseSpyPlayed(&enemy->deck, nowInPlayerUse, troopCard, globalDeck);
                     canPlay = true;
                     qDebug() << "ENEMY picked " << troopCard.getName();
                     break;
@@ -297,14 +179,25 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
 
     case 2:
 
+        qDebug() << "Przeciwnik myśli...";
+        //najpierw poszukaj szpiega:
+        hornId = enemy->deck.hasHorn();
+        troopCard = enemy->deck.hasSpy();
+        if (troopCard.getName() != "none"){
+            caseSpyPlayed(&enemy->deck, nowInPlayerUse, troopCard, globalDeck);
+            troopCardPicked = true;
+            break;
+        }
 
-
-        if (enemy->deck.getTroopCardSize() > 0 && random % 10 > 5) {
+        //potem zobacz troopCard
+        else if (enemy->deck.getTroopCardSize() > 0 && random % 10 > 5) {
             //zagraj troopcard
-
-            if (random % 10 > 7) {
-
-            }
+            troopCardPicked = true;
+            troopCard = enemy->deck.getTroopCard(0);
+            enemy->deck.removeTroopCard(troopCard);
+            enemy->nowInUse.addTroopCard(troopCard);
+            qDebug() << "ENEMY picked " << troopCard.getName();
+            break;
         }
 
         ///////////////////////////////// ROZWAŻ POGODOWE //////////////////////////////
@@ -312,15 +205,63 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         //
         else if (enemy->deck.hasFreeze() && nowInPlayerUse->getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() >
             enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength()) {
-            //zagraj freeze
+
+            card = Card("Freeze", 1, 24);
+            caseWeatherPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
+            qDebug() << "ENEMY picked " << card.getName();
+            break;
         }
         else if (enemy->deck.hasFog() && nowInPlayerUse->getShootingCardArray().getNonLegendaryTroops().getOverallStrength() >
             enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength()) {
-            //zagraj fog
+
+            card = Card("Fog", 2, 25);
+            caseWeatherPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
+            qDebug() << "ENEMY picked " << card.getName();
+            break;
         }
         else if (enemy->deck.hasRain() && nowInPlayerUse->getBallisticCardArray().getNonLegendaryTroops().getOverallStrength() >
             enemy->nowInUse.getBallisticCardArray().getNonLegendaryTroops().getOverallStrength()) {
-            //zagraj rain
+
+            card = Card("Rain", 3, 26);
+            caseWeatherPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card);
+            qDebug() << "ENEMY picked " << card.getName();
+            break;
+        }
+
+        //rozważ clear sky
+
+        else if (enemy->deck.hasClearSky()){
+
+            //jeżeli pozytywne to przeciwnik mocniejszy
+            int originalPointDifference = enemy->nowInUse.getOverallStrength() - nowInPlayerUse->getOverallStrength();
+            bool activeWeatherNow[3] = { nowInPlayerUse->hasFreeze(), nowInPlayerUse->hasFog(), nowInPlayerUse->hasRain() };
+
+            enemy->nowInUse.removeWeatherCards();
+            nowInPlayerUse->removeWeatherCards();
+
+            int newPointDifference = enemy->nowInUse.getOverallStrength() - nowInPlayerUse->getOverallStrength();
+
+            if(newPointDifference > originalPointDifference){ //jeżeli opłaca się zagrać clear sky
+                card = Card("Clear Sky", 4, 27);
+                enemy->deck.removeCard(card);
+                qDebug() << "ENEMY picked " << card.getName();
+                break;
+
+            }
+            else{ //nie opłaca się, przywróć karty
+                if(activeWeatherNow[0]){
+                    enemy->nowInUse.addCard(Card("Freeze", 1, 24));
+                    nowInPlayerUse->addCard(Card("Freeze", 1, 24));
+                }
+                if(activeWeatherNow[1]){
+                    enemy->nowInUse.addCard(Card("Fog", 2, 25));
+                    nowInPlayerUse->addCard(Card("Fog", 2, 25));
+                }
+                if(activeWeatherNow[2]){
+                    enemy->nowInUse.addCard(Card("Fog", 3, 26));
+                    nowInPlayerUse->addCard(Card("Fog", 3, 26));
+                }
+            }
         }
 
 
@@ -331,20 +272,13 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         //////////////////////// ROZWAŻ BATTLE HORN ////////////////////////////
         //
         //
-        else if (enemy->deck.hasHorn() &&
-            enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
-            !enemy->nowInUse.getMeeleeCardArray().hasHorn()) {
-            //zagraj battle horn na meelee
-        }
-        else if (enemy->deck.hasHorn() &&
-            enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
-            !enemy->nowInUse.getShootingCardArray().hasHorn()) {
-            //zagraj battle horn na shooting
-        }
-        else if (enemy->deck.hasHorn() &&
-            enemy->nowInUse.getBallisticCardArray().getNonLegendaryTroops().getOverallStrength() > 8 &&
-            !enemy->nowInUse.getBallisticCardArray().hasHorn()) {
-            //zagraj battle horn na ballistic
+        else if (hornId > 0 && enemy->nowInUse.getNonLegendaryTroops().getOverallStrength() > 14) {
+
+            card = Card("Battle Horn", 4, hornId);
+            caseEnemyBattleHornPlayed(&enemy->deck, &enemy->nowInUse, card);
+            qDebug() << "ENEMY picked " << card.getName();
+            break;
+
         }
         //
         //
@@ -353,22 +287,40 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         //////////////////////////ROZWAŻ POŻOGĘ/////////////////////////////////
         //
         //
+        //TODO
+        //
+        //
         else if (enemy->deck.hasScorch() &&
             enemy->nowInUse.getStrongestNonlegendCardSum() < nowInPlayerUse->getStrongestNonlegendCardSum()) {
-            //zagraj scorch
+            qDebug() << "ENEMY picked Scorch";
         }
 
+        else if (enemy->deck.getTroopCardSize() > 0){
+            troopCardPicked = true;
+            troopCard = enemy->deck.getTroopCard(0);
+            enemy->deck.removeTroopCard(troopCard);
+            enemy->nowInUse.addTroopCard(troopCard);
+            qDebug() << "ENEMY picked " << troopCard.getName();
+            break;
+        }
+
+        else{
+            qDebug() << "ENEMY SURRENDERS!";
+            enemyEnds = true;
+            break;
+        }
         break;
 
     default:
         qDebug() << "Invalid argument";
         throw invalid_argument("Invalid argument!");
     }
-    enemy->nowInUse.adjustStrength();
-    nowInPlayerUse->adjustStrength();
+    enemy->nowInUse.adjustStrength(globalDeck);
+    nowInPlayerUse->adjustStrength(globalDeck);
 
     if(enemyEnds) return "none";
     else if(troopCardPicked){
+        qDebug() << "TroopCard picked!";
         return troopCard.getName();
     }
     else return card.getName();
@@ -490,11 +442,11 @@ bool caseEnemyBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedC
     }
 }
 
-void cardList::adjustStrength() {
+void cardList::adjustStrength(cardList& globalDeck) {
     /////////////////// ZALEZNE OD KART POGODOWYCH/////////////////////////
     //
     //
-    this->restoreDefaultStrength(); ///// !!! przywracamy domyślne wartości sił kart ////////
+    this->restoreDefaultStrength(globalDeck); ///// !!! przywracamy domyślne wartości sił kart ////////
 
     if (find(cardArray.begin(), cardArray.end(), Card("Freeze", MEELEE, 24)) != cardArray.end()) {
         for (TroopCard &card : troopCardArray) { //przeszukaj meelee
@@ -570,9 +522,7 @@ void cardList::adjustStrength() {
 
 }
 
-void cardList::restoreDefaultStrength() {
-    cardList originalDeck;
-    originalDeck.readCardsFromFile();
+void cardList::restoreDefaultStrength(cardList& originalDeck) {
     for (TroopCard& card : troopCardArray) {
         for (TroopCard& ogCard : *originalDeck.getTroopCardArray()) {
             if (card.getName() == ogCard.getName()) {

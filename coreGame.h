@@ -5,19 +5,16 @@
 #include "cardList.h"
 #include "enemy.h"
 
-#include <unordered_set>
-#include <unordered_map>
+
 #include <QDebug>
 
-cardList prepareDeck(cardList allCards);
-void printDeck(const cardList& deck, const string color);
-void playerDecision(cardList* deck, cardList* nowInUse, Enemy* enemy);
+cardList prepareDeck(cardList allCards, bool easier);
 bool caseEnemyBattleHornPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard);
 vector<bool> caseBattleHornPlayed(cardList* nowInUse);
 bool caseEnemyScorchPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card& pickedCard);
 bool caseScorchPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card& pickedCard);
-bool caseMannequinPlayed(cardList* deck, cardList* nowInUse, Card& pickedCard);
-void caseSpyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck);
+bool caseMannequinPlayed(cardList* nowInUse);
+void caseSpyPlayed(cardList* deck, cardList* nowInVictimUse, TroopCard pickedCard, cardList globalDeck);
 void caseClearSkyPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card pickedCard);
 void caseWeatherPlayed(cardList* deck, cardList* nowInPickingUse, cardList* nowInVictimUse, Card pickedCard);
 QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck);

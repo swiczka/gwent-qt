@@ -27,8 +27,6 @@ int Card::getRange() const {
 
 int Card::getId() const {
 	return this->id; 
-
-
 }
 
 QString Card::getStrRange() const {

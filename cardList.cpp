@@ -23,23 +23,6 @@ cardList& cardList::operator=(const cardList& other){
     return *this;
 }
 
-void cardList::printCardArray() const {
-    int index = 1;
-    for (const TroopCard& card : troopCardArray) {
-        qDebug() << index << "." << "\n";
-        card.printCardInfo();
-        index++;
-        qDebug() << "\n";
-    }
-
-    for (const Card& card : cardArray) {
-        qDebug() << index << "." << "\n";
-        card.printCardInfo();
-        index++;
-        qDebug() << "\n";
-    }
-}
-
 TroopCard& cardList::pickTroopCard(int pickedIndex) {
     if (pickedIndex - 1 < getTroopCardSize()) {
         return getTroopCard(pickedIndex - 1);
@@ -72,9 +55,6 @@ void cardList::removeTroopCard(const TroopCard& cardToRemove) {
 }
 
 void cardList::removeCard(const Card& cardToRemove) {
-    //vector<Card>::iterator it = find(cardArray.begin(), cardArray.end(), cardToRemove);
-    //cardArray.erase(it);
-
     cardArray.erase(remove_if(cardArray.begin(), cardArray.end(), [cardToRemove](const Card& card) {
         return (cardToRemove.getId() == card.getId());
         }), cardArray.end());
@@ -188,17 +168,28 @@ bool cardList::hasRain() const {
     else return true;
 }
 
-bool cardList::hasHorn() const {
-    if (find_if(cardArray.begin(), cardArray.end(), [](const Card& card) {
-        return card.getName() == "Battle Horn";
-        }) == cardArray.end()) return false;
-    else return true;
+//je¿eli zwróci 0 to nie ma, je¿eli jest to zwróci id battle horn (potrzebne do decyzji przeciwnika na normalnym)
+int cardList::hasHorn() const {
+    int id = 0;
+
+    if (std::any_of(cardArray.begin(), cardArray.end(), [&](const Card& card) {
+            id = card.getId();
+            return card.getName() == "Battle Horn";
+        })) return id;
+
+    else return 0;
 }
 
 bool cardList::hasScorch() const {
     return find_if(cardArray.begin(), cardArray.end(), [](const Card& card) {
         return card.getName() == "Scorch";
         }) != cardArray.end();
+}
+
+bool cardList::hasClearSky() const {
+    return find_if(cardArray.begin(), cardArray.end(), [](const Card& card) {
+        return card.getName() == "Clear Sky";
+           }) != cardArray.end();
 }
 
 bool cardList::hasMannequinsOnly() const {
@@ -211,87 +202,13 @@ bool cardList::hasMannequinsOnly() const {
     }
 }
 
-void cardList::printRow() const{
-    int rowWidth = 25;
-
-    ////// wypisz nazwy kart ////////
-    //
-    //
-    for (const TroopCard& card : troopCardArray) {
-
-        qDebug() << qSetFieldWidth(rowWidth) << card.getName();
-
+//if returns card with none name, there are no spies, otheriwse return a spy
+TroopCard cardList::hasSpy() const
+{
+    for(auto &card : troopCardArray){
+        if(card.getSpy()) return card;
     }
-
-    bool hasAnyMannequins = find_if(cardArray.begin(), cardArray.end(), [](const Card& card) {
-        return card.getName() == "Mannequin";
-        }) != cardArray.end();
-
-    if (hasAnyMannequins) {
-        for (const Card& card : cardArray) {
-            if (card.getName() == "Mannequin") {
-                qDebug() << qSetFieldWidth(rowWidth) << "Mannequin";
-            }
-        }
-    }
-
-    qDebug() << "\n";
-    //
-    //
-    ////////////////////////////////
-
-    //////////////// wypisz zasi?g kart //////////////////
-    //
-    //
-    for (const TroopCard& card : troopCardArray) {
-        qDebug() << qSetFieldWidth(rowWidth) << card.getStrRange();
-    }
-    if (hasAnyMannequins) {
-        for (const Card& card : cardArray) {
-            if (card.getName() == "Mannequin") {
-                qDebug() << qSetFieldWidth(rowWidth) << card.getStrRange();
-            }
-        }
-    }
-    qDebug() << "\n";
-    //
-    //
-    /////////////////////////////////
-
-    ////////////////// wypisz si?? karty o ile si? da /////////////////
-    //
-    //
-    for (const TroopCard& card : troopCardArray) {
-        string toPrint = "Strength: " + to_string(card.getStrength());
-        qDebug() << qSetFieldWidth(rowWidth) << toPrint;
-    }
-    qDebug() << "\n";
-    //
-    //
-    ////////////////////////////////////////
-
-    /////////////////// wypisz dodatkowe cechy ////////////////
-    //
-    //
-    for (const TroopCard& card : troopCardArray) {
-
-        string toPrint = "";
-        if (card.getLegendary()) {
-            toPrint += "Legendary ";
-        }
-        if (card.getCombo()) {
-            toPrint += "Combo ";
-        }
-        if (card.getSpy()) {
-            toPrint += "Spy ";
-        }
-        qDebug() << qSetFieldWidth(rowWidth) << toPrint;
-
-    }
-    qDebug() << "\n";
-    //
-    //
-    //////////////////////////////////////////
+    return TroopCard();
 }
 
 int cardList::getOverallStrength() const {
@@ -333,41 +250,5 @@ void cardList::addTwoCards(cardList globalDeck) {
                 howManyAdded++;
             }
         }
-    }
-}
-
-void cardList::readCardsFromFile() {
-    ifstream inputFile("D:\\C C++\\qt\\gwent-qt\\cards.txt");
-    //ifstream inputFile("D:\\Cpp\\gwent-qt\\cards.txt");
-    if (inputFile.is_open()) {
-        string line;
-        while (getline(inputFile, line)) {
-
-            istringstream iss(line);
-            string element;
-            vector<QString> token;
-
-            while (getline(iss, element, ';')) {
-                token.push_back(QString::fromStdString(element));
-            }
-
-            if (token[0] == "TroopCard") {
-                bool isLegend = (token[5] == "true");
-                bool isSp = (token[4] == "true");
-                bool isComb = (token[7] == "combo");
-
-                TroopCard newTroopCard = TroopCard(token[1], token[2].QString::toInt(),
-                    token[6].QString::toInt(), token[3].QString::toInt(), isLegend, isSp, isComb);
-
-                this->addTroopCard(newTroopCard);
-            }
-            else if (token[0] == "Other" || token[0] == "WeatherCard") {
-                Card newCard = Card(token[1], token[2].QString::toInt(), token[3].QString::toInt());
-                this->addCard(newCard);
-            }
-        }
-    }
-    else {
-        qDebug() << "Nie uda³o siê otworzyæ pliku" << "\n";
     }
 }
