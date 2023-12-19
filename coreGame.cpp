@@ -72,6 +72,13 @@ bool caseMannequinPlayed(cardList* nowInUse) {
     else return true;
 }
 
+void caseEnemyMannequinPlayed(Enemy* enemy, Card card, TroopCard cardToReplace){
+    enemy->deck.removeCard(card);
+    enemy->nowInUse.addCard(Card("Mannequin", cardToReplace.getRange(), card.getId()));
+    enemy->nowInUse.removeTroopCard(cardToReplace);
+    enemy->deck.addTroopCard(cardToReplace);
+}
+
 
 
 QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDeck, cardList globalDeck) {
@@ -82,6 +89,9 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
     bool troopCardPicked = false;
     TroopCard troopCard;
     Card card;
+
+
+
     int hornId = 0;
     switch (enemy->difficulty) {
 
@@ -189,8 +199,28 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
             break;
         }
 
+
+        ////////////////////////////////////ROZWAŻ MANEKINA//////////////////////
+        ///
+        ///
+        /// tymczasowo daj manekin na mCard, szpiega na mTroopCard
+        card = enemy->deck.hasMannequins();
+        troopCard = enemy->nowInUse.hasSpy();
+
+        if(card.getName() != "none" && !troopCard.getLegendary() && troopCard.getName() != "none"){
+            caseEnemyMannequinPlayed(enemy, card, troopCard);
+            qDebug() << "ENEMY picked Mannequin";
+            break;
+        }
+        //
+        //
+        card = Card();
+        troopCard = TroopCard();
+        //////////////////////////////////////////////////////////////////////////
+        ///
+
         //potem zobacz troopCard
-        else if (enemy->deck.getTroopCardSize() > 0 && random % 10 > 5) {
+        if (enemy->deck.getTroopCardSize() > 0 && random % 10 > 5) {
             //zagraj troopcard
             troopCardPicked = true;
             troopCard = enemy->deck.getTroopCard(0);
@@ -203,7 +233,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         ///////////////////////////////// ROZWAŻ POGODOWE //////////////////////////////
         //
         //
-        else if (enemy->deck.hasFreeze() && nowInPlayerUse->getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() >
+        if (enemy->deck.hasFreeze() && nowInPlayerUse->getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength() >
             enemy->nowInUse.getMeeleeCardArray().getNonLegendaryTroops().getOverallStrength()) {
 
             card = Card("Freeze", 1, 24);
@@ -211,7 +241,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
             qDebug() << "ENEMY picked " << card.getName();
             break;
         }
-        else if (enemy->deck.hasFog() && nowInPlayerUse->getShootingCardArray().getNonLegendaryTroops().getOverallStrength() >
+        if (enemy->deck.hasFog() && nowInPlayerUse->getShootingCardArray().getNonLegendaryTroops().getOverallStrength() >
             enemy->nowInUse.getShootingCardArray().getNonLegendaryTroops().getOverallStrength()) {
 
             card = Card("Fog", 2, 25);
@@ -230,7 +260,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
 
         //rozważ clear sky
 
-        else if (enemy->deck.hasClearSky()){
+        if (enemy->deck.hasClearSky()){
 
             //jeżeli pozytywne to przeciwnik mocniejszy
             int originalPointDifference = enemy->nowInUse.getOverallStrength() - nowInPlayerUse->getOverallStrength();
@@ -272,7 +302,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         //////////////////////// ROZWAŻ BATTLE HORN ////////////////////////////
         //
         //
-        else if (hornId > 0 && enemy->nowInUse.getNonLegendaryTroops().getOverallStrength() > 14) {
+        if (hornId > 0 && enemy->nowInUse.getNonLegendaryTroops().getOverallStrength() > 14) {
 
             card = Card("Battle Horn", 4, hornId);
             caseEnemyBattleHornPlayed(&enemy->deck, &enemy->nowInUse, card);
@@ -290,12 +320,19 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         //TODO
         //
         //
-        else if (enemy->deck.hasScorch() &&
+        if (enemy->deck.hasScorch() &&
             enemy->nowInUse.getStrongestNonlegendCardSum() < nowInPlayerUse->getStrongestNonlegendCardSum()) {
-            qDebug() << "ENEMY picked Scorch";
+            if(caseEnemyScorchPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card)){
+                qDebug() << "ENEMY picked Scorch";
+                break;
+            }
         }
+        //
+        //
+        ////////////////////////////////////////////////////////////////////////
 
-        else if (enemy->deck.getTroopCardSize() > 0){
+
+        if (enemy->deck.getTroopCardSize() > 0){
             troopCardPicked = true;
             troopCard = enemy->deck.getTroopCard(0);
             enemy->deck.removeTroopCard(troopCard);
@@ -304,7 +341,7 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
             break;
         }
 
-        else{
+        {
             qDebug() << "ENEMY SURRENDERS!";
             enemyEnds = true;
             break;

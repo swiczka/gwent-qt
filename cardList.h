@@ -85,6 +85,7 @@ public:
 	void addTwoCards(cardList globalDeck);
 
     bool hasClearSky() const;
+    Card hasMannequins() const;
 private:
 	vector<Card> cardArray;
 	vector<TroopCard> troopCardArray;

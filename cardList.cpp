@@ -202,6 +202,15 @@ bool cardList::hasMannequinsOnly() const {
     }
 }
 
+Card cardList::hasMannequins() const {
+    Card toReturn;
+    if(std::any_of(cardArray.begin(), cardArray.end(), [&](const Card& card){
+            toReturn = card;
+            return card.getName() == "Mannequin";
+        })) return toReturn;
+    else return Card();
+}
+
 //if returns card with none name, there are no spies, otheriwse return a spy
 TroopCard cardList::hasSpy() const
 {

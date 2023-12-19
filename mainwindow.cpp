@@ -12,6 +12,7 @@
 #include <QTimer>
 #include <QPixmap>
 
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -544,17 +545,17 @@ void MainWindow::endGame(){
     QPixmap image;
 
     if(yourPoints > enemyPoints) { //gdy wygrana
-        image = QPixmap("D:/C C++/qt/gwent-qt/images/win.png");
+        image = QPixmap("D:/gwent_images/win.png");
         message = "You won with " + QString::fromStdString(to_string(yourPoints)) + " pts. against enemy's " +
                                  QString::fromStdString(to_string(enemyPoints)) + " pts.!";
     }
     else if(yourPoints < enemyPoints){ //gdy przegrana
-        image = QPixmap("D:/C C++/qt/gwent-qt/images/lose.png");
+        image = QPixmap("D:/gwent_images/lose.png");
         message = "You lost with " + QString::fromStdString(to_string(yourPoints)) + " pts. against enemy's " +
                                  QString::fromStdString(to_string(enemyPoints)) + " pts..";
     }
     else if(yourPoints == enemyPoints){
-        image = QPixmap("D:/C C++/qt/gwent-qt/images/win.png");
+        image = QPixmap("D:/gwent_images/win.png");
         message = "You drawn with " + QString::fromStdString(to_string(yourPoints)) + " pts. against enemy's " +
                   QString::fromStdString(to_string(enemyPoints)) + " pts..";
     }
