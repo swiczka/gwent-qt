@@ -14,7 +14,6 @@ SOURCES += \
     cardList.cpp \
     coreGame.cpp \
     difficultydialog.cpp \
-    gwent.cpp \
     main.cpp \
     mainwindow.cpp
 

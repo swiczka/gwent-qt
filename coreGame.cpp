@@ -11,8 +11,8 @@ bool playerEnds = false;
 
 
 
-#define MAX_TROOP_COUNT 6
-#define MAX_OTHER_COUNT 3
+#define MAX_TROOP_COUNT 7
+#define MAX_OTHER_COUNT 2
 
 cardList prepareDeck(cardList allCards, bool easier) {
     cardList newPlayerDeck;
@@ -305,11 +305,12 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         if (hornId > 0 && enemy->nowInUse.getNonLegendaryTroops().getOverallStrength() > 14) {
 
             card = Card("Battle Horn", 4, hornId);
-            caseEnemyBattleHornPlayed(&enemy->deck, &enemy->nowInUse, card);
-            qDebug() << "ENEMY picked " << card.getName();
-            break;
-
+            if(caseEnemyBattleHornPlayed(&enemy->deck, &enemy->nowInUse, card)){
+                qDebug() << "ENEMY picked " << card.getName();
+                break;
+            }
         }
+        card = Card();
         //
         //
         /////////////////////////////////////////////////////////////
@@ -317,16 +318,15 @@ QString enemyDecision(Enemy* enemy, cardList* nowInPlayerUse, cardList* playerDe
         //////////////////////////ROZWAŻ POŻOGĘ/////////////////////////////////
         //
         //
-        //TODO
-        //
-        //
         if (enemy->deck.hasScorch() &&
             enemy->nowInUse.getStrongestNonlegendCardSum() < nowInPlayerUse->getStrongestNonlegendCardSum()) {
+            card = Card("Scorch", 4, 32);
             if(caseEnemyScorchPlayed(&enemy->deck, &enemy->nowInUse, nowInPlayerUse, card)){
                 qDebug() << "ENEMY picked Scorch";
                 break;
             }
         }
+        card = Card();
         //
         //
         ////////////////////////////////////////////////////////////////////////
@@ -485,7 +485,7 @@ void cardList::adjustStrength(cardList& globalDeck) {
     //
     this->restoreDefaultStrength(globalDeck); ///// !!! przywracamy domyślne wartości sił kart ////////
 
-    if (find(cardArray.begin(), cardArray.end(), Card("Freeze", MEELEE, 24)) != cardArray.end()) {
+    if (find(cardArray.begin(), cardArray.end(), Card("Freeze", MEELEE, 24)) != cardArray.end())  {
         for (TroopCard &card : troopCardArray) { //przeszukaj meelee
             if (!card.getLegendary() && card.getRange() == MEELEE) card.setStrength(1); // ustaw siłę kart meelee na 1 jesli jest freeze
         }
